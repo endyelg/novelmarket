@@ -13,6 +13,7 @@ use App\Http\Controllers\Shop\MainController;
 use App\Http\Controllers\Shop\ProductController as ShopProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CategoryChartController;
 
 /** Book shop routes **/
 Route::prefix('')->group(function(){
@@ -87,6 +88,7 @@ Route::prefix('/admin')->group(function(){
     Route::prefix('/payments')->group(function(){
         Route::get('' , [PaymentController::class , 'index'])->name('admin.payments.index');
     });
+
 });
 
 /** Authentication routes **/

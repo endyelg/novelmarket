@@ -4,21 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\Admin\Traits\HasUser;
 use Illuminate\Http\Request;
 
-class UserController extends Controller{
-    use HasUser;
-    
+class UserController extends Controller
+{
     /**
      * Show users list
      *
      * @return \Illuminate\Http\Response
      */
-    public function all(){
+    public function all()
+    {
         $users = User::paginate(10);
 
-        return view('admin.frontend.users.list' , compact('users'));
+        return view('admin.frontend.users.list', compact('users'));
     }
 
     /**
@@ -26,7 +25,8 @@ class UserController extends Controller{
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(){
+    public function create()
+    {
         return view('admin.frontend.users.add');
     }
 
@@ -36,12 +36,33 @@ class UserController extends Controller{
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request){
-        $validator = $this->validateAddForm($request);
+    public function store(Request $request)
+    {
+        try {
+            // Validate form data
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:6',
+                'role' => 'required|in:user,admin',
+                'phone-number' => 'required|string|max:20', // Changed field name to match HTML form
+                'address' => 'required|string|max:255',
+            ]);
 
-        $this->doStore($validator);
+            // Create user
+            $user = new User();
+            $user->name = $validatedData['name'];
+            $user->email = $validatedData['email'];
+            $user->password = bcrypt($validatedData['password']);
+            $user->role = $validatedData['role'];
+            $user->phone_number = $validatedData['phone-number']; // Updated field name to match database column
+            $user->address = $validatedData['address'];
+            $user->save();
 
-        return redirect()->route('admin.users.all')->with('simpleSuccessAlert' , 'User added successfully');
+            return redirect()->route('admin.users.all')->with('simpleSuccessAlert', 'User added successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['failed_storage' => 'Failed to store user.']);
+        }
     }
 
     /**
@@ -50,8 +71,9 @@ class UserController extends Controller{
      * @param  \App\Models\User $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user){
-        return view('admin.frontend.users.edit' , compact('user'));
+    public function edit(User $user)
+    {
+        return view('admin.frontend.users.edit', compact('user'));
     }
 
     /**
@@ -61,12 +83,30 @@ class UserController extends Controller{
      * @param  \App\Models\User $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user){
-        $validator = $this->validateUpdateForm($request);
+    public function update(Request $request, User $user)
+    {
+        try {
+            // Validate form data
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'role' => 'required|in:user,admin',
+                'phone-number' => 'required|string|max:20', // Changed field name to match HTML form
+                'address' => 'required|string|max:255',
+            ]);
 
-        $this->doUpdate($user , $validator);
+            // Update user
+            $user->name = $validatedData['name'];
+            $user->email = $validatedData['email'];
+            $user->role = $validatedData['role'];
+            $user->phone_number = $validatedData['phone-number']; // Updated field name to match database column
+            $user->address = $validatedData['address'];
+            $user->save();
 
-        return redirect()->route('admin.users.all')->with('simpleSuccessAlert' , 'User updated successfully');
+            return redirect()->route('admin.users.all')->with('simpleSuccessAlert', 'User updated successfully');
+        } catch (\Exception $e) {
+            return back()->withInput()->withErrors(['failed_update' => 'Failed to update user.']);
+        }
     }
 
     /**
@@ -75,10 +115,14 @@ class UserController extends Controller{
      * @param  \App\Models\User $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user){
-        $user->delete();
+    public function destroy(User $user)
+    {
+        try {
+            $user->delete();
 
-        return back()->with('simpleSuccessAlert' , 'User removed successfully');
+            return redirect()->route('admin.users.all')->with('simpleSuccessAlert', 'User removed successfully');
+        } catch (\Exception $e) {
+            return back()->withErrors(['failed_delete' => 'Failed to delete user.']);
+        }
     }
 }
-
