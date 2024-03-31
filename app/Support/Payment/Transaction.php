@@ -1,4 +1,5 @@
-<?PhP 
+<?php 
+
 namespace App\Support\Payment;
 
 use App\Events\RegisteredOrder;
@@ -10,12 +11,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class Transaction{
+class Transaction {
     /* Preparation */
     public function __construct(
-        private Request $request ,
-        private Basket $basket ,
-        private CostInterface $cost){
+        private Request $request,
+        private Basket $basket,
+        private CostInterface $cost
+    ) {
     }
 
     /**
@@ -23,7 +25,7 @@ class Transaction{
      *
      * @return null|array
      */
-    public function doPaymentOperation(){
+    public function doPaymentOperation() {
         DB::beginTransaction();
 
         try {
@@ -34,7 +36,7 @@ class Transaction{
             $payment = $this->makePayment($order);
 
             DB::commit();
-        }catch(\Exception $event){
+        } catch (\Exception $event) {
             DB::rollBack();
             return null;
         }
@@ -51,16 +53,17 @@ class Transaction{
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
-    public function CompletionUserInformation(){
+    public function CompletionUserInformation() {
         $user = Auth::user();
 
-        $user->email = Auth::user()->email; //For higher reliability and security(is option!)
+        // For higher reliability and security (optional!)
+        $user->email = Auth::user()->email;
 
-        if(empty($user->phone_number))
+        if (empty($user->phone_number))
             $user->phone_number = $this->request->phone_number;
 
         $user->address = $this->request->address;
-        
+
         $user->save();
 
         return $user;
@@ -69,9 +72,9 @@ class Transaction{
     /**
      * Creating an order for registration
      *
-     * @return array
+     * @return \App\Models\Order
      */
-    public function makeOrder(){
+    public function makeOrder() {
         $order = Order::create([
             'user_id' => Auth::user()->id,
             'amount' => $this->basket->getTotalProductsCost(),
@@ -85,12 +88,12 @@ class Transaction{
     }
 
     /**
-     * Creating an payment for order payment 
+     * Creating an payment for order payment
      *
-     * @param \App\Models\OrderOrder $order
-     * @return array
+     * @param \App\Models\Order $order
+     * @return \App\Models\Payment
      */
-    public function makePayment(Order $order){
+    public function makePayment(Order $order) {
         $payment = Payment::create([
             'order_id' => $order->id,
             'amount' => $this->cost->getTotalCost(),
@@ -107,26 +110,25 @@ class Transaction{
      * @param \App\Models\Order $order
      * @return void
      */
-    public function completeOrder(Order $order){
+    public function completeOrder(Order $order) {
         $this->normalizeStock($order);
 
         event(new RegisteredOrder($order));
-        
+
         $this->basket->clear();
 
         session()->forget('coupon');
     }
-    
+
     /**
      * Decreasing product inventory after successful order registration
      *
      * @param \App\Models\Order $order
      * @return void
      */
-    public function normalizeStock(Order $order){
-        foreach($order->products as $product){
+    public function normalizeStock(Order $order) {
+        foreach ($order->products as $product) {
             $product->decrementStock($product->pivot->quantity);
         }
     }
 }
-

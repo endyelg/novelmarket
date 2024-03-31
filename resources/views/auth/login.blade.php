@@ -40,7 +40,7 @@
                             </div>
                         </div>
                         <div class="submit-btn-area">
-                            <button type="submit">Submit</button>
+                            <button type="submit">Login</button>
                         </div>
                         <div class="form-footer text-center mt-5">
                             <p class="text-muted">Don't have an account? <a href="{{ route('register') }}">Register</a></p>

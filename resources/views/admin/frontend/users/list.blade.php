@@ -15,7 +15,7 @@
                 <th>Role</th>
                 <th>Number</th>
                 <th>Address</th>
-                <th>Joined</th>
+                <!-- <th>Joined</th> -->
                 <th>Action</th>
               </tr>
             </thead>
@@ -28,7 +28,7 @@
                   <th>{{ $user->role }}</th>
                   <th>{{ $user->phone_number }}</th>
                   <th>{{ $user->address }}</th>
-                  <th>{{ $user->created_at }}</th>
+                  <!-- <th>{{ $user->created_at }}</th> -->
                   <th>
                     <form action="{{ route('admin.users.destroy' , $user->id ) }}" method="POST" id="prepare-form">
                       @csrf

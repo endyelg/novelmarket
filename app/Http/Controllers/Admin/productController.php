@@ -99,4 +99,3 @@ class productController extends Controller{
         return response()->download(public_path('images\products\\' . $product->demo_url));
     }
 }
-

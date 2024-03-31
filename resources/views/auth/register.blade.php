@@ -7,7 +7,7 @@
     <div class="login-area login-s2">
         <div class="container">
             <div class="login-box ptb--100">
-                <form action="{{ route('register') }}" method="POST">
+                <form action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                     <div class="login-form-head">
                         <h4>Register</h4>
@@ -40,6 +40,9 @@
                         <div class="form-gp">
                             <input name="password_confirmation" placeholder="Confirm Password" type="password">
                         </div>
+                        <div class="form-gp">
+                            <input type="file" name="image_path" accept="image/*">
+                        </div>
                         <div class="submit-btn-area">
                             <button type="submit">Submit</button>
                         </div>
@@ -53,5 +56,3 @@
     </div>
 <!-- register area end -->
 @endsection
-
-

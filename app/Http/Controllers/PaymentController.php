@@ -2,75 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Payment\PayRequest;
-use App\Models\Order;
-use App\Support\Payment\PaymentService;
-use App\Support\Payment\Traits\HasPayment;
-use App\Support\Payment\Transaction;
 use Illuminate\Http\Request;
 
-class PaymentController extends Controller{
-    /** Preparation **/
-    use HasPayment;
-    public function __construct(private Transaction $transaction){
-        $this->middleware('auth');
-    }
-    
-    /**
-     * Paying the order in different ways
-     *
-     * @param \App\Http\Requests\Payment\PayRequest $request
-     * @return mixed
-     */
-    public function pay(PayRequest $request){
-        try{
-            $validator = $request->validated();
+class PaymentController extends Controller
+{
+    public function pay(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            // Validation rules...
+        ]);
 
-            $gatewayName = $validator['gateway'];
+        // Retrieve the selected payment method
+        $paymentMethod = $request->input('method');
 
-            $result = $this->transaction->doPaymentOperation($validator); 
-
-            if($result['payment']->method === 'online'){
-                $gatewayRequest = $this->preparationGatewayRequest($gatewayName , $result);
-                $paymentService = new PaymentService($gatewayName , $gatewayRequest);
-                return $paymentService->pay();
-            }else{
-                $this->transaction->completeOrder($result['order']);
-                return $this->successResponse();
-            }
-        }catch(\Exception $event){
-            return $this->errorResponse();
-        }   
-    }
-
-    /**
-     * Return payment details to verify payment
-     *
-     * @param string $gatewayName
-     * @param \Illuminate\Http\Request $request
-     * @return void
-     */
-    public function callback(string $gatewayName , Request $request){
-        try{
-            $gatewayRequest = $this->preparationGatewayRequest($gatewayName.'Verify' , $request);
-
-            $paymentService = new PaymentService($gatewayName , $gatewayRequest);
-            
-            $verifyResult = $paymentService->verify();
-
-            if(!$verifyResult['status'])
-                return $this->verificationFailureResponse();
-
-            if($verifyResult['status'] === true && $verifyResult['statusCode'] === 100){ #(if is option)->For more security, a bet has been made and you can remove this
-                $result = $verifyResult['content'];
-                $order = Order::where('res_num', $result['order_id'])->first();
-                $this->successVerification($order , $gatewayName , $result);
-                return $this->successResponse();
-            }
-        }catch(\Exception $event){
-            return $this->errorResponse();
+        // Fetch records based on the selected payment method
+        if ($paymentMethod === 'online') {
+            // Fetch records for online payment method
+        } elseif ($paymentMethod === 'offline') {
+            // Fetch records for offline payment method
         }
-    } 
-} 
+
+        // Further processing...
+    }
+}
 
 

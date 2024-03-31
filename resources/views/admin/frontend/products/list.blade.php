@@ -14,11 +14,11 @@
                 <th>Category</th>
                 <th>Author</th>
                 <th>Description</th>
-                <th>Demo</th>
+                <th>Image</th>
                 <th>Price</th>
-                <th>Stock</th>
                 <th>Discount</th>
-                <th>Built</th>
+                <th>Stock</th>
+                <!-- <th>Built</th> -->
                 <th>Action</th>
               </tr>
             </thead>
@@ -31,14 +31,14 @@
                   <th>{{ $product->author }}</th>
                   <th>{{ substr($product->description , 0 , 15) . '...' }}</th>
                   <th>
-                    <a href="{{ config('urls.images_products_url') . $product->demo_url }}" id="a-black"><span class="ti-link"></span></a>
-                    |
-                    <a href="{{ route('admin.products.download.demo' , $product->id)}}" id="a-black"><span class="ti-download"></span></a>
+                  <img src="{{ asset('images/products/' . $product->demo_url) }}" alt="Demo Image" width="160" height="160">
+                    <!-- |
+                    <a href="{{ $product->demo_url }}" download id="a-black"><span class="ti-download"></span></a> -->
                   </th>
                   <th>${{ $product->price }}</th>
-                  <th>{{ $product->stock }}</th>
                   <th>{{ $product->percent_discount }}</th>
-                  <th>{{ $product->created_at }}</th>
+                  <th>{{ $product->stock }}</th>
+                  <!-- <th>{{ $product->created_at }}</th> -->
                   <th>
                     <form action="{{ route('admin.products.destroy' , $product->id) }}" method="POST" id="prepare-form">
                     @csrf

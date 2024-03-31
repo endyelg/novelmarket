@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\productController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\PaymentController as ControllersPaymentController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Shop\ProductController as ShopProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryChartController;
+use App\Http\Controllers\Admin\ChartController;
 
 /** Book shop routes **/
 Route::prefix('')->group(function(){
@@ -45,11 +47,6 @@ Route::prefix('/payment')->group(function(){
     Route::get('/{gateway}/callback' , [ControllersPaymentController::class , 'callback'])->name('payment.callback');
 });
 
-/** Coupon routes **/
-Route::prefix('/coupon')->group(function(){
-    Route::post('/' , [CouponController::class , 'storage'])->name('coupon.storage');
-    Route::get('/destroy' , [CouponController::class , 'destroy'])->name('coupon.destroy');
-});
 
 /** Routes that has admin prefix **/
 Route::prefix('/admin')->group(function(){
@@ -80,6 +77,23 @@ Route::prefix('/admin')->group(function(){
         Route::get('/{user}/edit' , [UserController::class , 'edit'])->name('admin.users.edit');
         Route::put('/{user}/update' , [UserController::class , 'update'])->name('admin.users.update');
     });
+    Route::prefix('/suppliers')->group(function(){
+        Route::get('' , [SupplierController::class , 'all'])->name('admin.suppliers.all');
+        Route::get('/create' , [SupplierController::class , 'create'])->name('admin.suppliers.create');
+        Route::post('' , [SupplierController::class , 'store'])->name('admin.suppliers.store');
+        Route::delete('/{supplier}/remove' , [SupplierController::class , 'destroy'])->name('admin.suppliers.destroy');
+        Route::get('/{supplier}/edit' , [SupplierController::class , 'edit'])->name('admin.suppliers.edit');
+        Route::put('/{supplier}/update' , [SupplierController::class , 'update'])->name('admin.suppliers.update');
+});
+
+Route::prefix('/charts')->group(function(){
+        Route::get('/pie', [ChartController::class, 'pieChart'])->name('admin.charts.pie');
+        Route::get('/line', [ChartController::class, 'lineChart'])->name('admin.charts.line');
+        Route::get('/bar', [ChartController::class, 'barChart'])->name('admin.charts.bar');
+
+    });
+
+
     /* For orders */
     Route::prefix('/orders')->group(function(){
         Route::get('' , [OrderController::class , 'index'])->name('admin.orders.index');
@@ -88,6 +102,8 @@ Route::prefix('/admin')->group(function(){
     Route::prefix('/payments')->group(function(){
         Route::get('' , [PaymentController::class , 'index'])->name('admin.payments.index');
     });
+
+
 
 });
 

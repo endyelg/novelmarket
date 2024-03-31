@@ -35,7 +35,7 @@
           <th>Id</th>
           <th>Website Genre</th>
           <th>Category</th>
-          <th>Joined</th>
+          <!-- <th>Joined</th> -->
           <th>Action</th>
         </tr>
       </thead>
@@ -45,7 +45,7 @@
             <th>{{ $category->id }}</th>
             <th>{{ $category->slug }}</th>
             <th>{{ $category->title }}</th>
-            <th>{{ $category->created_at }}</th>
+            <!-- <th>{{ $category->created_at }}</th> -->
             <th>
               <form action="{{ route('admin.categories.destroy' , $category->id) }}" method="POST" id='prepare-form'>
               @csrf
