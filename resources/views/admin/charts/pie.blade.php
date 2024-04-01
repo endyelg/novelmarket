@@ -20,7 +20,7 @@
       google.charts.setOnLoadCallback(drawChart);
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
+          ['Category', 'Product'],
           ['Work',     11],
           ['Eat',      2],
           ['Commute',  2],
@@ -29,7 +29,7 @@
         ]);
 
         var options = {
-          title: 'My Daily Activities',
+          title: 'Product Categories Chart',
           is3D: true,
         };
 
