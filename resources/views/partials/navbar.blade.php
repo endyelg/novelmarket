@@ -31,7 +31,7 @@
                                             @csrf
                                                 <button type="submit" class="logout-btn">Logout</button>
                                             </form>
-                                            <li><a href="#">MyPanel</a></li>
+                                            <li><a href="{{ route('my-panel') }}">MyPanel</a></li>
                                         </ul>
                                     @endauth
                                 </li>
@@ -41,7 +41,7 @@
                                 @endguest
                                 @auth
                                     <li class="menu-item"><a class="nav-link" data-effect="Contact"></a></li>
-                                    <li class="menu-item"><a href="#" class="nav-link" data-effect="Contact" id="user-status">{{ Auth::user()->name }}</a></li>
+                                    <li class="menu-item"><a href="{{ route('my-panel') }}" class="nav-link" data-effect="Contact" id="user-status">{{ Auth::user()->name }}</a></li>
                                 @endauth
                             </ul>
                             <div class="hamburger">

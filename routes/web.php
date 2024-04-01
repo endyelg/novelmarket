@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\productController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\MyPanelController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\PaymentController as ControllersPaymentController;
 use App\Http\Controllers\Shop\BasketController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Shop\ProductController as ShopProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryChartController;
+use App\Http\Controllers\Shop\ReviewController;
 use App\Http\Controllers\Admin\ChartController;
 
 /** Book shop routes **/
@@ -46,6 +48,7 @@ Route::prefix('/payment')->group(function(){
     Route::post('/pay' , [ControllersPaymentController::class , 'pay'])->name('payment.pay');
     Route::get('/{gateway}/callback' , [ControllersPaymentController::class , 'callback'])->name('payment.callback');
 });
+
 
 
 /** Routes that has admin prefix **/
@@ -103,9 +106,15 @@ Route::prefix('/charts')->group(function(){
         Route::get('' , [PaymentController::class , 'index'])->name('admin.payments.index');
     });
 
-
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+  
 
 });
 
 /** Authentication routes **/
 Auth::routes();
+Route::middleware(['web'])->group(function () {
+    Route::match(['get', 'post'], '/my-panel', [MyPanelController::class, 'index'])->name('my-panel');
+    Route::post('/update-user', [MyPanelController::class, 'updateUser'])->name('update-user');
+
+});

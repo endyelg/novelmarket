@@ -21,11 +21,7 @@
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
           ['Category', 'Product'],
-          ['Work',     11],
-          ['Eat',      2],
-          ['Commute',  2],
-          ['Watch TV', 2],
-          ['Sleep',    7]
+          <?php echo $chartData; ?>
         ]);
 
         var options = {
