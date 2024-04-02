@@ -20,10 +20,22 @@ class ChartController extends Controller
     return view('admin.charts.pie', compact('chartData'));
 }
 
-    public function lineChart()
-    {
-        return view('admin.charts.line');
+public function lineChart()
+{
+    $result = DB::select(DB::raw("SELECT c.title AS category_title, COUNT(p.id) AS product_count, SUM(p.stock) AS total_stock FROM CATEGORIES c JOIN PRODUCTS p ON c.id = p.category_id GROUP BY c.title"));
+
+    $data = "";
+
+    foreach ($result as $val) {
+        // Push each row of data into the $data array
+        $data .= "['" . $val->category_title . "', " . $val->product_count . ", " . $val->total_stock . "],";
     }
+
+    $chartData = $data;
+
+    // Pass the $chartData array to the view
+    return view('admin.charts.line', compact('chartData'));
+}
 
     public function barChart()
 {

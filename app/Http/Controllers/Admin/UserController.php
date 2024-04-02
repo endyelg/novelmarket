@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -38,76 +40,79 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validate form data
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email',
-                'password' => 'required|string|min:6',
-                'role' => 'required|in:user,admin',
-                'phone-number' => 'required|string|max:20', // Changed field name to match HTML form
-                'address' => 'required|string|max:255',
-            ]);
+        $validator = $this->validateAddForm($request);
 
+        if ($validator->fails()) {
+        return back()
+            ->withErrors($validator)
+            ->withInput();
+    }
             // Create user
             $user = new User();
-            $user->name = $validatedData['name'];
-            $user->email = $validatedData['email'];
-            $user->password = bcrypt($validatedData['password']);
-            $user->role = $validatedData['role'];
-            $user->phone_number = $validatedData['phone-number']; // Updated field name to match database column
-            $user->address = $validatedData['address'];
+            $user->name = $request->input('name');
+            $user->email = $request->input('email');
+            $user->password = $request->input('password');
+            $user->role = $request->input('role');
+            $user->phone_number = $request->input('phone_number');
+            $user->address = $request->input('address'); 
+            if ($request->hasFile('image_path')) {
+                // Store the new image and update the user's image_path
+            $imagePath = $request->file('image_path')->store('profile_images', 'public');
+            $user->image_path = $imagePath;
+            } else {
+               
+            $user->image_path = null; // Or leave it as null
+            }
             $user->save();
 
-            return redirect()->route('admin.users.all')->with('simpleSuccessAlert', 'User added successfully');
-        } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['failed_storage' => 'Failed to store user.']);
-        }
-    }
-
+        return redirect()->route('admin.users.all')->with('simpleSuccessAlert', 'User added successfully');
+        } 
     /**
      * Show form for editing the specified user.
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User $user
      * @return \Illuminate\Http\Response
      */
     public function edit(User $user)
     {
+        //$user = User::findOrFail($id);
         return view('admin.frontend.users.edit', compact('user'));
     }
 
-    /**
+    /** 
      * Update specified user in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
-    {
-        try {
-            // Validate form data
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $user->id,
-                'role' => 'required|in:user,admin',
-                'phone-number' => 'required|string|max:20', // Changed field name to match HTML form
-                'address' => 'required|string|max:255',
-            ]);
-
-            // Update user
-            $user->name = $validatedData['name'];
-            $user->email = $validatedData['email'];
-            $user->role = $validatedData['role'];
-            $user->phone_number = $validatedData['phone-number']; // Updated field name to match database column
-            $user->address = $validatedData['address'];
-            $user->save();
-
-            return redirect()->route('admin.users.all')->with('simpleSuccessAlert', 'User updated successfully');
-        } catch (\Exception $e) {
-            return back()->withInput()->withErrors(['failed_update' => 'Failed to update user.']);
+    public function update(User $user, Request $request){
+        $validator = $this->validateUpdateForm($request);
+        // dd($user);
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
         }
+
+    // Update user details
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = $request->input('password');
+        $user->role = $request->input('role');
+        $user->phone_number = $request->input('phone_number');
+        $user->address = $request->input('address');
+
+    if ($request->hasFile('image_path')) {
+        
+        $imagePath = $request->file('image_path')->store('profile_images', 'public');
+        $user->image_path = $imagePath;
     }
+    $user->save();
+
+    return redirect()->route('admin.users.all')->with('simpleSuccessAlert', 'User updated successfully');
+}
+
 
     /**
      * Remove specified user from storage.
@@ -117,12 +122,50 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        try {
-            $user->delete();
+        File::delete(public_path("\images\users\\$user->image_path"));
 
-            return redirect()->route('admin.users.all')->with('simpleSuccessAlert', 'User removed successfully');
-        } catch (\Exception $e) {
-            return back()->withErrors(['failed_delete' => 'Failed to delete user.']);
-        }
+        $user->delete();
+
+        return back()->with('simpleSuccessAlert' , 'User removed successfully');
     }
+
+    /**
+     * Validate form data for adding a new user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validateAddForm(Request $request)
+    {
+        return Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'password' => 'required|string|min:6',
+            'role' => 'required|in:user,admin',
+            'phone_number' => 'required|string|max:20', // Changed field name to match HTML form
+            'address' => 'required|string|max:255',
+        ]);  
+    }
+
+    protected function validateUpdateForm(Request $request)
+    {
+        return Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'image_path' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'password' => 'required|string|min:6',
+            'role' => 'required|in:user,admin',
+            'phone_number' => 'required|string|max:20', // Changed field name to match HTML form
+            'address' => 'required|string|max:255',
+        ]);
+    }
+
+    public function deactivateUser(User $user)
+    {
+        $user->update(['is_active' => false]);
+
+        return redirect()->back()->with('success', 'User deactivated successfully');
+    }   
+
 }

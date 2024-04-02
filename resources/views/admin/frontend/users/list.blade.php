@@ -15,6 +15,7 @@
                 <th>Role</th>
                 <th>Number</th>
                 <th>Address</th>
+                <th>Image</th>
                 <!-- <th>Joined</th> -->
                 <th>Action</th>
               </tr>
@@ -28,6 +29,9 @@
                   <th>{{ $user->role }}</th>
                   <th>{{ $user->phone_number }}</th>
                   <th>{{ $user->address }}</th>
+                  <th>
+                  <img src="{{ asset('storage/' . $user->image_path) }}" alt="Profile Image" width="160" height="160">
+                  | </th>
                   <!-- <th>{{ $user->created_at }}</th> -->
                   <th>
                     <form action="{{ route('admin.users.destroy' , $user->id ) }}" method="POST" id="prepare-form">
@@ -35,7 +39,6 @@
                       @method('delete')
                         <button type="submit" id="button-delete"><span class="ti-trash"></span></button>
                     </form>
-                    |
                     <a href="{{ route('admin.users.edit' , $user->id) }}" id="a-black"><span class="ti-pencil"></span></a>
                   </th>
                 </tr>
@@ -51,4 +54,3 @@
 </div>
 <!-- Users list end -->
 @endsection
-

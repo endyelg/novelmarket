@@ -6,7 +6,6 @@
 <!-- Suppliers table start -->
 <div class="main-content-inner">
     <div class="row">
-            <h5 class="card-title"><b>LIST OF SUPPLIERS</b></h5><br>
             <table class="table">
                 <thead class="table-dark">
                     <tr>

@@ -16,10 +16,10 @@
                                     <th scope="col">Id</th>
                                     <th scope="col">User</th>
                                     <th scope="col">Amount</th>
-                                    <th scope="col">ResNum</th>
+                                    <!-- <th scope="col">ResNum</th> -->
                                     <th scope="col">Status</th>
-                                    <th scope="col">Built</th>
-                                    <th scope="col">Order basket</th>
+                                    <!-- <th scope="col">Built</th>
+                                    <th scope="col">Order basket</th> -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -28,7 +28,7 @@
                                     <th>{{ $order->id }}</th>
                                     <td>{{ $order->user->name }}</td>
                                     <td>${{ $order->amount }}</td>
-                                    <td>{{ $order->res_num }}</td>
+                                    <!-- <td>{{ $order->res_num }}</td> -->
                                     <td>
                                         @if($order->status === 'paid')
                                             <i class="fa fa-smile-o"></i>

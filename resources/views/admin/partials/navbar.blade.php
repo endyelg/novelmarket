@@ -27,17 +27,25 @@
                                 </ul>
                             </li>
                             <li>
+                                <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-dollar"></i><span>Expenses Management</span></a>
+                                <ul class="collapse">
+                                    <li><a href="{{ route('admin.expenses.all') }}">List</a></li>
+                                    <li><a href="{{ route('admin.expenses.create') }}">Add</a></li>
+                                </ul>
+                            </li>
+                            <li>
                                 <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-area-chart"></i><span>Charts</span></a>
                                 <ul class="collapse">
                                    <li><a href="{{ route('admin.charts.pie') }}"><i class="fa fa-pie-chart" aria-hidden="true"></i> <span>Pie Chart</span></a></li>
-                                   <li><a href="{{ route('admin.charts.line') }}"><i class="fa fa-line-chart" aria-hidden="true"></i></i> <span>Line Chart</span></a></li>
                                    <li><a href="{{ route('admin.charts.bar') }}"><i class="fa fa-bar-chart" aria-hidden="true"></i></i></i> <span>Bar Chart</span></a></li>
+                                   <li><a href="{{ route('admin.charts.line') }}"><i class="fa fa-line-chart" aria-hidden="true"></i></i> <span>Line Chart</span></a></li>
                                 </ul>
                             </li>
 
                             <li><a href="{{ route('admin.categories.index') }}"><i class="fa fa-object-group"></i> <span>Categories</span></a></li>
                             <li><a href="{{ route('admin.orders.index') }}"><i class="fa fa-list-ol"></i> <span>Orders</span></a></li>
-                            <li><a href="{{ route('admin.payments.index') }}"><i class="fa fa-dollar"></i> <span>Payments</span></a></li>
+                            <li><a href="{{ route('admin.reviews.list') }}"><i class="fa fa-comments"></i> <span>Reviews</span></a></li>
+                            <!-- <li><a href="{{ route('admin.payments.index') }}"><i class="fa fa-dollar"></i> <span>Payments</span></a></li> -->
                         </ul>
                     </nav>
                 </div>

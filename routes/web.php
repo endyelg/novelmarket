@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\productController;
+use App\Http\Controllers\Admin\ExpensesController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\MyPanelController;
@@ -88,7 +89,15 @@ Route::prefix('/admin')->group(function(){
         Route::get('/{supplier}/edit' , [SupplierController::class , 'edit'])->name('admin.suppliers.edit');
         Route::put('/{supplier}/update' , [SupplierController::class , 'update'])->name('admin.suppliers.update');
 });
-
+    /* For expenses */
+    Route::prefix('/expenses')->group(function(){
+        Route::get('' , [ExpensesController::class , 'all'])->name('admin.expenses.all');
+        Route::get('/create' , [ExpensesController::class , 'create'])->name('admin.expenses.create');
+        Route::post('' , [ExpensesController::class , 'store'])->name('admin.expenses.store');
+        Route::delete('/{expense}/remove' , [ExpensesController::class , 'destroy'])->name('admin.expenses.destroy');
+        Route::get('/{expense}/edit' , [ExpensesController::class , 'edit'])->name('admin.expenses.edit');
+        Route::put('/{expense}/update' , [ExpensesController::class , 'update'])->name('admin.expenses.update');
+});
 Route::prefix('/charts')->group(function(){
         Route::get('/pie', [ChartController::class, 'pieChart'])->name('admin.charts.pie');
         Route::get('/line', [ChartController::class, 'lineChart'])->name('admin.charts.line');
@@ -105,10 +114,6 @@ Route::prefix('/charts')->group(function(){
     Route::prefix('/payments')->group(function(){
         Route::get('' , [PaymentController::class , 'index'])->name('admin.payments.index');
     });
-
-    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-  
-
 });
 
 /** Authentication routes **/
@@ -116,5 +121,8 @@ Auth::routes();
 Route::middleware(['web'])->group(function () {
     Route::match(['get', 'post'], '/my-panel', [MyPanelController::class, 'index'])->name('my-panel');
     Route::post('/update-user', [MyPanelController::class, 'updateUser'])->name('update-user');
+
+    Route::post('/reviews', 'ReviewController@store')->name('reviews.store');
+    Route::get('/admin/reviews', 'Admin\ReviewController@index')->name('admin.reviews.list');
 
 });
